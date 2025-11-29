@@ -18,7 +18,9 @@ def _get_python_interpreter():
         version = HERMETIC_PYTHON_VERSION.replace(".", "_"),
     )
     if _is_bzlmod_enabled():
-        return str(INTERPRETER_LABELS[python_toolchain_name])
+        if python_toolchain_name in INTERPRETER_LABELS:
+            return str(INTERPRETER_LABELS[python_toolchain_name])
+        return "@{}//:python".format(python_toolchain_name)
     return "@{}//:python".format(python_toolchain_name)
 
 def _create_local_python_repository(repository_ctx):
