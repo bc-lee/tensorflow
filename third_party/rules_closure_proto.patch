@@ -1,0 +1,12 @@
+diff --git a/closure/protobuf/closure_proto_library.bzl b/closure/protobuf/closure_proto_library.bzl
+index f3ee6fb..d6967a1 100644
+--- a/closure/protobuf/closure_proto_library.bzl
++++ b/closure/protobuf/closure_proto_library.bzl
+@@ -16,6 +16,7 @@
+ """
+ 
+ load("//closure/compiler:closure_js_library.bzl", "create_closure_js_library")
++load("@com_google_protobuf//bazel/common:proto_info.bzl", "ProtoInfo")
+ load("//closure/private:defs.bzl", "CLOSURE_JS_TOOLCHAIN_ATTRS", "unfurl")
+ 
+ # This was borrowed from Rules Go, licensed under Apache 2.

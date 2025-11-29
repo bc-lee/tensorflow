@@ -70,6 +70,10 @@ load("@//tensorflow:workspace2.bzl", "tf_workspace2")
 
 tf_workspace2()
 
+load("@com_google_protobuf//:protobuf_deps.bzl", "protobuf_deps")
+
+protobuf_deps()
+
 load("@//tensorflow:workspace1.bzl", "tf_workspace1")
 
 tf_workspace1()

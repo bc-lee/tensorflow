@@ -16,6 +16,8 @@ def workspace():
             "https://storage.googleapis.com/mirror.tensorflow.org/github.com/bazelbuild/rules_closure/archive/308b05b2419edb5c8ee0471b67a40403df940149.tar.gz",
             "https://github.com/bazelbuild/rules_closure/archive/308b05b2419edb5c8ee0471b67a40403df940149.tar.gz",  # 2019-06-13
         ],
+        patches = ["//third_party:rules_closure_proto.patch"],
+        patch_args = ["-p1"],
     )
 
     tf_runtime()

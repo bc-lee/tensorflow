@@ -19,8 +19,20 @@ symbols through this python script.
   * `VS140COMNTOOLS`
 """
 
-load("@bazel_tools//tools/cpp:lib_cc_configure.bzl", "auto_configure_fail")
-load("@bazel_tools//tools/cpp:windows_cc_configure.bzl", "find_msvc_tool", "find_vc_path")
+# load("@bazel_tools//tools/cpp:lib_cc_configure.bzl", "auto_configure_fail")
+# load("@bazel_tools//tools/cpp:windows_cc_configure.bzl", "find_msvc_tool", "find_vc_path")
+
+def auto_configure_fail(msg):
+    """Output failure message when auto configuration fails."""
+    fail("Auto-Configuration Error: %s" % msg)
+
+def find_vc_path(repository_ctx):
+    """Dummy implementation of find_vc_path."""
+    return None
+
+def find_msvc_tool(repository_ctx, vc_path, tool):
+    """Dummy implementation of find_msvc_tool."""
+    return None
 
 def _def_file_filter_configure_impl(repository_ctx):
     if repository_ctx.os.name.lower().find("windows") == -1:
