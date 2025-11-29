@@ -1,0 +1,61 @@
+module(name = "org_tensorflow")
+
+bazel_dep(name = "bazel_skylib", version = "1.7.1")
+bazel_dep(name = "rules_python", version = "0.40.0")
+bazel_dep(name = "rules_cc", version = "0.0.15")
+bazel_dep(name = "rules_java", version = "8.6.3")
+bazel_dep(name = "protobuf", version = "29.3", repo_name = "com_google_protobuf")
+bazel_dep(name = "abseil-cpp", version = "20240722.0", repo_name = "com_google_absl")
+
+# Use XLA from the local registry, aliased as local_xla
+bazel_dep(name = "xla", version = "0.0.20251129-my.0", repo_name = "local_xla")
+
+# Use TSL from XLA's extension, aliased as local_tsl
+# This ensures we use the same TSL version as XLA and avoids circular dependencies
+tsl_ext = use_extension("@local_xla//third_party/extensions:tsl.bzl", "tsl_extension")
+use_repo(tsl_ext, local_tsl = "tsl")
+
+# Add rules_ml_toolchain dependency needed by xla
+bazel_dep(name = "rules_ml_toolchain")
+archive_override(
+    module_name = "rules_ml_toolchain",
+    integrity = "sha256-XxcnU5d1K2Zq2/jwqBo+v7HiapcLRZysM6BqjwPKpTc=",
+    strip_prefix = "rules_ml_toolchain-a2626615e1277a635b43dd268e1d4bc892afea10",
+    urls = ["https://github.com/google-ml-infra/rules_ml_toolchain/archive/a2626615e1277a635b43dd268e1d4bc892afea10.tar.gz"],
+)
+
+# For WORKSPACE compatibility, create the tf_vendored repos
+tf_vendored = use_repo_rule("//third_party:repo.bzl", "tf_vendored")
+# local_xla is provided by the module dependency
+# local_tsl is provided by the extension above
+
+# Configure rules from local_xla (these create stub repos when not enabled)
+rocm_configure = use_repo_rule("@local_xla//third_party/gpus:rocm_configure.bzl", "rocm_configure")
+rocm_configure(name = "local_config_rocm")
+
+# Use hermetic cuda configure
+cuda_configure = use_repo_rule("@local_xla//third_party/gpus/cuda/hermetic:cuda_configure.bzl", "cuda_configure")
+cuda_configure(name = "local_config_cuda")
+
+sycl_configure = use_repo_rule("@local_xla//third_party/gpus:sycl_configure.bzl", "sycl_configure")
+sycl_configure(name = "local_config_sycl")
+
+tensorrt_configure = use_repo_rule("@local_xla//third_party/tensorrt:tensorrt_configure.bzl", "tensorrt_configure")
+tensorrt_configure(name = "local_config_tensorrt")
+
+git_configure = use_repo_rule("@local_xla//third_party/git:git_configure.bzl", "git_configure")
+git_configure(name = "local_config_git")
+
+remote_execution_configure = use_repo_rule("@local_xla//tools/toolchains/remote:configure.bzl", "remote_execution_configure")
+remote_execution_configure(name = "local_config_remote_execution")
+
+# Python and system libs configure from tensorflow
+python_configure = use_repo_rule("//third_party/py:python_configure.bzl", "python_configure")
+python_configure(name = "local_config_python")
+
+syslibs_configure = use_repo_rule("//third_party/systemlibs:syslibs_configure.bzl", "syslibs_configure")
+syslibs_configure(name = "local_config_syslibs")
+
+# Python wheel version suffix
+python_wheel_version_suffix_repository = use_repo_rule("@local_xla//third_party/py:python_wheel.bzl", "python_wheel_version_suffix_repository")
+python_wheel_version_suffix_repository(name = "tf_wheel_version_suffix")
